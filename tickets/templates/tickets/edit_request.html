@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Quotation Request</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #eef2f7;
+            font-family: 'Poppins', sans-serif;
+            color: #34495e;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .card-header {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #1e90ff, #00b4d8);
+            border-bottom: 2px solid #1e90ff;
+        }
+        h1 {
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+        .card-body {
+            padding: 15px;
+        }
+        .form-group {
+            margin-bottom: 0.8rem;
+            position: relative;
+        }
+        label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        .form-control, .custom-select {
+            font-size: 0.85rem;
+            padding: 0.45rem 0.75rem;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus, .custom-select:focus {
+            border-color: #1e90ff;
+            box-shadow: 0 0 5px rgba(30, 144, 255, 0.3);
+            outline: none;
+        }
+        .select2-container .select2-selection--multiple {
+            min-height: 32px;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+        }
+        .form-check-group {
+            margin-top: 0.3rem;
+        }
+        .form-check-inline {
+            margin-right: 1.2rem;
+        }
+        .btn {
+            font-size: 0.9rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-primary {
+            background-color: #1e90ff;
+            border-color: #1e90ff;
+        }
+        .btn-primary:hover {
+            background-color: #007bff;
+            border-color: #007bff;
+            transform: translateY(-1px);
+        }
+        .conditional-field.hidden-field {
+            display: none;
+        }
+        .invalid-feedback {
+            display: block;
+            color: #e74c3c;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+            font-weight: 400;
+        }
+        .form-control.is-invalid, .custom-select.is-invalid {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.6rem;
+            position: relative;
+            padding-left: 20px;
+        }
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #1e90ff;
+            border-radius: 50%;
+        }
+        .form-row {
+            margin-bottom: 0.6rem;
+            background: #fafafa;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ececec;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1>Edit Quotation Request: {{ quotation_request.tracking_id }}</h1>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'agent_dashboard' %}" class="btn btn-primary mb-2">← Back</a>
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Oops!</strong> Please fix the following:
+                        <ul>
+                            {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    <!-- Business Type -->
+                    <div class="form-group">
+                        <label for="{{ form.business_type.id_for_label }}">Business Type</label>
+                        {{ form.business_type }}
+                        {% if form.business_type.errors %}
+                            <div class="invalid-feedback">{{ form.business_type.errors|join:" " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Main Grid -->
+                    <div class="form-row">
+                        <!-- Left Column: Vehicle Details -->
+                        <div class="col-md-4">
+                            <div class="section-title">1. Vehicle Details</div>
+                            <div class="form-group">
+                                <label for="{{ form.product_type.id_for_label }}">Product Type</label>
+                                {{ form.product_type }}
+                                {% if form.product_type.errors %}
+                                    <div class="invalid-feedback">{{ form.product_type.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.coverage_type.id_for_label }}">Coverage Type</label>
+                                {{ form.coverage_type }}
+                                {% if form.coverage_type.errors %}
+                                    <div class="invalid-feedback">{{ form.coverage_type.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.make_model_variant.id_for_label }}">Make/Model/Variant</label>
+                                {{ form.make_model_variant }}
+                                {% if form.make_model_variant.errors %}
+                                    <div class="invalid-feedback">{{ form.make_model_variant.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Middle Column: Insurance Details -->
+                        <div class="col-md-4">
+                            <div class="section-title">2. Insurance Details</div>
+                            <div id="new-business-fields" class="conditional-field hidden-field">
+                                <div class="form-group">
+                                    <label for="{{ form.rto_code.id_for_label }}">RTO Code</label>
+                                    {{ form.rto_code }}
+                                    {% if form.rto_code.errors %}
+                                        <div class="invalid-feedback">{{ form.rto_code.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div id="registration-details" class="conditional-field hidden-field">
+                                <div class="form-group">
+                                    <label for="{{ form.registration_number.id_for_label }}">Reg. Number</label>
+                                    {{ form.registration_number }}
+                                    {% if form.registration_number.errors %}
+                                        <div class="invalid-feedback">{{ form.registration_number.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.registration_date.id_for_label }}">Reg. Date</label>
+                                    {{ form.registration_date }}
+                                    {% if form.registration_date.errors %}
+                                        <div class="invalid-feedback">{{ form.registration_date.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div id="existing-business-fields" class="conditional-field hidden-field">
+                                <div class="form-group">
+                                    <label for="{{ form.previous_expiry_date.id_for_label }}">Expiry Date</label>
+                                    {{ form.previous_expiry_date }}
+                                    {% if form.previous_expiry_date.errors %}
+                                        <div class="invalid-feedback">{{ form.previous_expiry_date.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.claim_status.id_for_label }}">Claim Status</label>
+                                    <div class="form-check-group">
+                                        {% for choice in form.claim_status %}
+                                        <div class="form-check form-check-inline">
+                                            {{ choice.tag }}
+                                            <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% if form.claim_status.errors %}
+                                        <div class="invalid-feedback">{{ form.claim_status.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.ncb.id_for_label }}">NCB</label>
+                                    {{ form.ncb }}
+                                    {% if form.ncb.errors %}
+                                        <div class="invalid-feedback">{{ form.ncb.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.preferred_idv.id_for_label }}">Preferred IDV</label>
+                                {{ form.preferred_idv }}
+                                {% if form.preferred_idv.errors %}
+                                    <div class="invalid-feedback">{{ form.preferred_idv.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Add-ons & Documents -->
+                        <div class="col-md-4">
+                            <div class="section-title">3. Add-ons & Docs</div>
+                            <div class="form-group">
+                                <label for="{{ form.add_ons.id_for_label }}">Add-ons</label>
+                                {{ form.add_ons }}
+                                {% if form.add_ons.errors %}
+                                    <div class="invalid-feedback">{{ form.add_ons.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.preferred_insurer.id_for_label }}">Insurers</label>
+                                {{ form.preferred_insurer }}
+                                {% if form.preferred_insurer.errors %}
+                                    <div class="invalid-feedback">{{ form.preferred_insurer.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.additional_requirements.id_for_label }}">Requirements</label>
+                                {{ form.additional_requirements }}
+                                {% if form.additional_requirements.errors %}
+                                    <div class="invalid-feedback">{{ form.additional_requirements.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.document1.id_for_label }}">Doc 1</label>
+                                {{ form.document1 }}
+                                {% if quotation_request.document1 %}
+                                    <p>Current: <a href="{{ quotation_request.document1.url }}">Download</a></p>
+                                {% endif %}
+                                {% if form.document1.errors %}
+                                    <div class="invalid-feedback">{{ form.document1.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.document2.id_for_label }}">Doc 2</label>
+                                {{ form.document2 }}
+                                {% if quotation_request.document2 %}
+                                    <p>Current: <a href="{{ quotation_request.document2.url }}">Download</a></p>
+                                {% endif %}
+                                {% if form.document2.errors %}
+                                    <div class="invalid-feedback">{{ form.document2.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.document3.id_for_label }}">Doc 3</label>
+                                {{ form.document3 }}
+                                {% if quotation_request.document3 %}
+                                    <p>Current: <a href="{{ quotation_request.document3.url }}">Download</a></p>
+                                {% endif %}
+                                {% if form.document3.errors %}
+                                    <div class="invalid-feedback">{{ form.document3.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#id_add_ons, #id_preferred_insurer').select2({ width: '100%', placeholder: 'Select options' });
+
+            function toggleFields() {
+                const businessType = $('#id_business_type').val();
+                const isNew = businessType === 'New Business';
+                const isBreakIn = businessType === 'Used';
+                const isExisting = !(isNew || isBreakIn);
+
+                $('#new-business-fields').toggleClass('hidden-field', !isNew);
+                $('#registration-details').toggleClass('hidden-field', isNew);
+                $('#existing-business-fields').toggleClass('hidden-field', !(isExisting && !isNew));
+
+                const saodOption = $("#id_coverage_type option[value='SAOD']");
+                saodOption.prop('disabled', isNew);
+                if (isNew && $('#id_coverage_type').val() === 'SAOD') {
+                    $('#id_coverage_type').val('');
+                }
+
+                if (isNew) {
+                    $('#id_registration_number, #id_previous_expiry_date, #id_ncb, #id_registration_date').val('');
+                    $('input[name="claim_status"]').prop('checked', false);
+                } else if (isBreakIn) {
+                    $('#id_new-business-fields, #id_existing-business-fields').addClass('hidden-field');
+                    $('#id_previous_expiry_date, #id_ncb').val('');
+                    $('input[name="claim_status"]').prop('checked', false);
+                } else {
+                    $('#id_new-business-fields').addClass('hidden-field');
+                    $('#id_rto_code').val('');
+                }
+
+                $('#id_registration_number').prop('required', !isNew && !isBreakIn);
+            }
+
+            toggleFields();
+            $('#id_business_type').on('change', toggleFields);
+
+            $('input[type="date"]').attr({
+                'min': '2000-01-01',
+                'max': new Date().toISOString().split('T')[0]
+            });
+
+            {% for field in form %}
+                {% if field.errors %}
+                    $('#{{ field.id_for_label }}').addClass('is-invalid');
+                {% endif %}
+            {% endfor %}
+        });
+    </script>
+</body>
+</html>

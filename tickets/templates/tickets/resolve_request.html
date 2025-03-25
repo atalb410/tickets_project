@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolve Request: {{ quotation_request.tracking_id }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0;
+        }
+
+        .container-fluid {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .row {
+            margin: 0 -15px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .col-md-4 {
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.03);
+            padding: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .col-md-4:first-child .card {
+            min-height: 500px;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .details-table, .activity-table, .quotes-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .details-table th, .details-table td, .activity-table th, .activity-table td, .quotes-table th, .quotes-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.875rem;
+        }
+
+        .details-table th, .activity-table th, .quotes-table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .quotes-table thead th {
+            background-color: #f1f3f5;
+            color: #495057;
+            font-weight: 600;
+            padding: 12px 15px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .quotes-table td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .quotes-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .insurer-name {
+            font-weight: 500;
+            color: #343a40;
+        }
+
+        .badge {
+            margin-left: 8px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            border-radius: 12px;
+        }
+
+        .badge-pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .badge-accepted {
+            background-color: #28a745;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .badge-rejected {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn-view {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            border-color: #007bff;
+            color: #007bff;
+            background-color: transparent;
+        }
+
+        .btn-view:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-group textarea, .form-group input[type="file"] {
+            font-size: 0.875rem;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            width: 100%;
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 120px;
+        }
+
+        .form-group input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        .form-group textarea:focus, .form-group input[type="file"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        @media (max-width: 768px) {
+            .col-md-4 {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .row {
+                flex-direction: column;
+            }
+        }
+
+        .tab-header {
+            display: flex;
+            border-bottom: 2px solid #ccc;
+        }
+
+        .tab-button {
+            padding: 8px 12px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: #333;
+            margin-right: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .tab-button:hover {
+            color: #007bff;
+        }
+
+        .tab-button.active {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .request-tab-content, .activity-tab-content {
+            display: none;
+            padding: 15px;
+        }
+
+        .request-tab-content.active, .activity-tab-content.active {
+            display: block;
+        }
+
+        #requestDetails .details-table th,
+        #requestDetails .details-table td,
+        #previousPolicyDetails .details-table th,
+        #previousPolicyDetails .details-table td {
+            font-size: 0.75rem;
+            padding: 8px 10px;
+        }
+
+        #requestDetails .details-table th,
+        #previousPolicyDetails .details-table th {
+            font-weight: 500;
+        }
+
+        .chat-container {
+            padding: 10px;
+        }
+
+        .chat-messages {
+            height: 200px;
+            overflow-y: scroll;
+            border: 1px solid #e9ecef;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            word-break: break-word;
+            font-size: 0.75rem;
+        }
+
+        .message.sent {
+            background-color: #d4edda;
+            color: #155724;
+            text-align: right;
+        }
+
+        .message.received {
+            background-color: #f8f9fa;
+            color: #212529;
+            text-align: left;
+        }
+
+        .message-author {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .message-timestamp {
+            font-size: 0.65rem;
+            color: #6c757d;
+            margin-left: 5px;
+        }
+
+        .chat-input textarea {
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Resolve Request: {{ quotation_request.tracking_id }}</h1>
+        <a href="{% url 'engineer_dashboard' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Left Column: Submitted Details -->
+            <div class="col-md-4">
+                <div class="card">
+                    <h2>
+                        <div class="tab-header">
+                            <button class="tab-button active" onclick="openTab(event, 'requestDetails')">Request Details</button>
+                            <button class="tab-button" onclick="openTab(event, 'previousPolicyDetails')">Previous Policy</button>
+                            <button class="tab-button" onclick="openTab(event, 'inspectionDetails')">Inspection</button>
+                        </div>
+                    </h2>
+                    <div id="requestDetails" class="request-tab-content active">
+                        <table class="details-table">
+                            <tr><th>Tracking ID</th><td>{{ quotation_request.tracking_id }}</td></tr>
+                            <tr><th>Registration Number</th><td>{{ quotation_request.registration_number }}</td></tr>
+                            <tr><th>Product Type</th><td>{{ quotation_request.product_type }}</td></tr>
+                            <tr><th>Business Type</th><td>{{ quotation_request.business_type }}</td></tr>
+                            <tr><th>Coverage Type</th><td>{{ quotation_request.coverage_type }}</td></tr>
+                            <tr><th>Make/Model/Variant</th><td>{{ quotation_request.make_model_variant }}</td></tr>
+                            <tr><th>Registration Date</th><td>{{ quotation_request.registration_date|date:"Y-m-d"|default:"Not provided" }}</td></tr>
+                            <tr><th>RTO Code</th><td>{{ quotation_request.rto_code|default:"Not provided" }}</td></tr>
+                            <tr><th>Preferred IDV</th><td>{{ quotation_request.preferred_idv|default:"Not provided" }}</td></tr>
+                            <tr><th>Requirements</th><td>{{ quotation_request.additional_requirements|default:"None" }}</td></tr>
+                            <tr><th>Add-ons</th><td>{% for addon in quotation_request.add_ons.all %}{{ addon.name }}{% if not forloop.last %}, {% endif %}{% empty %}None{% endfor %}</td></tr>
+                            <tr><th>Preferred Insurers</th><td>{% for insurer in quotation_request.preferred_insurer.all %}{{ insurer.name }}{% if not forloop.last %}, {% endif %}{% empty %}None{% endfor %}</td></tr>
+                            <tr><th>Document 1</th><td>{% if quotation_request.document1 %}<a href="{{ quotation_request.document1.url }}" target="_blank">{{ quotation_request.document1.name|cut:"quotation_docs/" }}</a>{% else %}Not uploaded{% endif %}</td></tr>
+                            <tr><th>Document 2</th><td>{% if quotation_request.document2 %}<a href="{{ quotation_request.document2.url }}" target="_blank">{{ quotation_request.document2.name|cut:"quotation_docs/" }}</a>{% else %}Not uploaded{% endif %}</td></tr>
+                            <tr><th>Document 3</th><td>{% if quotation_request.document3 %}<a href="{{ quotation_request.document3.url }}" target="_blank">{{ quotation_request.document3.name|cut:"quotation_docs/" }}</a>{% else %}Not uploaded{% endif %}</td></tr>
+                            <tr><th>Created By</th><td>{{ quotation_request.created_by.username }}</td></tr>
+                            <tr><th>Status</th><td>{{ quotation_request.status }}</td></tr>
+                        </table>
+                    </div>
+                    <div id="previousPolicyDetails" class="request-tab-content">
+                        <table class="details-table">
+                            <tr><th>No Claim Bonus</th><td>{{ quotation_request.ncb|default:"Not provided" }}</td></tr>
+                            <tr><th>Claim Status</th><td>{{ quotation_request.claim_status|default:"Not provided" }}</td></tr>
+                            <tr><th>Previous Expiry</th><td>{{ quotation_request.previous_expiry_date|date:"Y-m-d"|default:"Not provided" }}</td></tr>
+                        </table>
+                    </div>
+                    <div id="inspectionDetails" class="request-tab-content">
+                        <p>Information about the inspection would be placed here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column: Attached Quotes/Documents, Resolve Request Form -->
+            <div class="col-md-4">
+                <div class="card">
+                    <h2>Attached Quotes/Documents</h2>
+                    {% if quotes_with_labels %}
+                        <table class="quotes-table">
+                            <thead>
+                                <tr>
+                                    <th>Insurer</th>
+                                    <th>Document</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for quote, insurer_label in quotes_with_labels %}
+                                    <tr>
+                                        <td>
+                                            <span class="insurer-name">{{ insurer_label }}</span>
+                                            <span class="badge badge-{{ quote.status|lower }}">{{ quote.status }}</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ quote.file.url }}" target="_blank" class="btn btn-outline-primary btn-sm btn-view">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No quotes attached yet.</p>
+                    {% endif %}
+                </div>
+                {% if quotation_request.status != 'Accepted' and quotation_request.status != 'Payment' %}
+                    <div class="card">
+                        <h2>Resolve Request</h2>
+                        <form method="post" action="{% url 'resolve_request' quotation_request.id %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Attach Quotes (up to 5):</label>
+                                <input type="file" name="quote_1" class="form-control-file" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFile(this)"><br>
+                                <input type="file" name="quote_2" class="form-control-file" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFile(this)"><br>
+                                <input type="file" name="quote_3" class="form-control-file" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFile(this)"><br>
+                                <input type="file" name="quote_4" class="form-control-file" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFile(this)"><br>
+                                <input type="file" name="quote_5" class="form-control-file" accept=".pdf,.jpg,.jpeg,.png" onchange="validateFile(this)">
+                                <small class="form-text text-muted">Allowed file types: PDF, JPG, JPEG, PNG. Max size: 5MB.</small>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-check"></i> Share Quote</button>
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
+                <!-- Payment link button, show if status is 'Payment'-->
+                {% if quotation_request.status == 'Payment' %}
+                    <div class="card">
+                        <h2>Send Payment Link</h2>
+                        <form method="post" action="{% url 'resolve_request' quotation_request.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success" name="send_payment_link"><i class="fas fa-link"></i> Send Payment Link</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Right Column: Activity Tracker and Chat -->
+            <div class="col-md-4">
+                <div class="card">
+                    <h2>Activity Tracker</h2>
+                    <div class="tab-header">
+                        <button class="tab-button active" onclick="openActivityTab(event, 'activityLog')">Activity Log</button>
+                        <button class="tab-button" onclick="openActivityTab(event, 'commentsSection')">Comments/Chat</button>
+                    </div>
+
+                    <div id="activityLog" class="activity-tab-content active">
+                        <table class="activity-table">
+                            <thead>
+                                <tr><th>Status</th><th>Timestamp</th></tr>
+                            </thead>
+                            <tbody>
+                                {% if quotation_request.activity_logs.all %}
+                                    {% for log in quotation_request.activity_logs.all %}
+                                        <tr>
+                                            <td>{{ log.status }}</td>
+                                            <td>{{ log.timestamp|date:"Y-m-d H:i" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr><td colspan="2">No activity recorded.</td></tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="commentsSection" class="activity-tab-content">
+                        <div class="chat-container">
+                            <div class="chat-messages" id="chat-messages">
+                                {% if quotation_request.comments.all %}
+                                    {% for comment in quotation_request.comments.all %}
+                                        <div class="message {% if comment.user == request.user %}sent{% else %}received{% endif %}">
+                                            <span class="message-author">{{ comment.user.username }}:</span>
+                                            {{ comment.text }}
+                                            <span class="message-timestamp">{{ comment.timestamp|date:"Y-m-d H:i" }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No comments yet.</p>
+                                {% endif %}
+                            </div>
+                            <div class="chat-input">
+                                <form id="comment-form" method="post" action="{% url 'add_comment' quotation_request.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="return_url" value="resolve_request">
+                                    <div class="form-group">
+                                        <textarea class="form-control" id="commentText" name="comment_text" rows="2" placeholder="Type your message..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-paper-plane"></i> Send</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("request-tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function openActivityTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("activity-tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function validateFile(input) {
+            const fileSizeLimit = 5 * 1024 * 1024; // 5MB
+            const fileTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > fileSizeLimit) {
+                    alert('File size exceeds 5MB. Please select a smaller file.');
+                    input.value = '';
+                    return false;
+                }
+                if (!fileTypes.includes(file.type)) {
+                    alert('Invalid file type. Please select a PDF, JPG, JPEG, or PNG file.');
+                    input.value = '';
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        $(document).ready(function() {
+            openTab(event, 'requestDetails');
+            openActivityTab(event, 'activityLog');
+
+            $('form').on('submit', function(e) {
+                const files = $('input[type="file"]').get();
+                let hasFile = false;
+                for (let i = 0; i < files.length; i++) {
+                    if (files[i].files.length > 0) {
+                        hasFile = true;
+                        break;
+                    }
+                }
+                if (!hasFile) {
+                    e.preventDefault();
+                    alert('Please attach at least one quote before submitting.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

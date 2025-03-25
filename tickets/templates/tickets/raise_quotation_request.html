@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raise New Quotation Request</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.03);
+            padding: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-control, .custom-select {
+            font-size: 0.875rem;
+            padding: 8px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            width: 100%;
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus, .custom-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        .form-check-group {
+            margin-top: 5px;
+        }
+
+        .form-check-inline {
+            margin-right: 15px;
+        }
+
+        .form-check-label {
+            font-size: 0.875rem;
+            color: #343a40;
+        }
+
+        /* Select2 Customization */
+        .select2-container .select2-selection--multiple {
+            min-height: 34px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding: 4px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Flatpickr Customization */
+        .flatpickr-input {
+            font-size: 0.875rem;
+            padding: 8px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #fff;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9f2ff;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
+        /* Error Styles */
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .form-control.is-invalid, .custom-select.is-invalid {
+            border-color: #dc3545;
+        }
+
+        /* Conditional Fields */
+        .conditional-field.hidden-field {
+            display: none;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: #007bff;
+            border-radius: 50%;
+        }
+
+        /* Form Row */
+        .form-row {
+            margin-bottom: 15px;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        /* Tooltip Icon */
+        .tooltip-icon {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-left: 5px;
+            cursor: help;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Raise New Quotation Request</h1>
+        <a href="{% url 'agent_dashboard' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" novalidate action="{% url 'raise_quotation_request' %}" id="quotation-form">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Oops!</strong> Please fix the following:
+                            <ul>
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    <!-- Business Type -->
+                    <div class="form-group">
+                        <label for="{{ form.business_type.id_for_label }}">Business Type<span class="tooltip-icon" data-toggle="tooltip" title="Select the type of insurance business">ⓘ</span></label>
+                        {{ form.business_type }}
+                        {% if form.business_type.errors %}
+                            <div class="invalid-feedback">{{ form.business_type.errors|join:" " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Main Grid -->
+                    <div class="form-row">
+                        <!-- Left Column: Vehicle Details -->
+                        <div class="col-md-4">
+                            <div class="section-title">1. Vehicle Details</div>
+                            <div class="form-group">
+                                <label for="{{ form.product_type.id_for_label }}">Product Type</label>
+                                {{ form.product_type }}
+                                {% if form.product_type.errors %}
+                                    <div class="invalid-feedback">{{ form.product_type.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.coverage_type.id_for_label }}">Coverage Type</label>
+                                {{ form.coverage_type }}
+                                {% if form.coverage_type.errors %}
+                                    <div class="invalid-feedback">{{ form.coverage_type.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.make_model_variant.id_for_label }}">Make/Model/Variant</label>
+                                {{ form.make_model_variant }}
+                                {% if form.make_model_variant.errors %}
+                                    <div class="invalid-feedback">{{ form.make_model_variant.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Middle Column: Insurance Details -->
+                        <div class="col-md-4">
+                            <div class="section-title">2. Insurance Details</div>
+                            <div id="new-business-fields" class="conditional-field hidden-field">
+                                <div class="form-group">
+                                    <label for="{{ form.rto_code.id_for_label }}">RTO Code<span class="tooltip-icon" data-toggle="tooltip" title="E.g., DL01 for Delhi">ⓘ</span></label>
+                                    {{ form.rto_code }}
+                                    {% if form.rto_code.errors %}
+                                        <div class="invalid-feedback">{{ form.rto_code.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div id="registration-details" class="conditional-field hidden-field">
+                                <div class="form-group">
+                                    <label for="{{ form.registration_number.id_for_label }}">Reg. Number</label>
+                                    {{ form.registration_number }}
+                                    {% if form.registration_number.errors %}
+                                        <div class="invalid-feedback">{{ form.registration_number.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.registration_date.id_for_label }}">Reg. Date</label>
+                                    {{ form.registration_date }}
+                                    {% if form.registration_date.errors %}
+                                        <div class="invalid-feedback">{{ form.registration_date.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div id="existing-business-fields" class="conditional-field hidden-field">
+                                <div class="form-group">
+                                    <label for="{{ form.previous_expiry_date.id_for_label }}">Expiry Date</label>
+                                    {{ form.previous_expiry_date }}
+                                    {% if form.previous_expiry_date.errors %}
+                                        <div class="invalid-feedback">{{ form.previous_expiry_date.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.claim_status.id_for_label }}">Claim Status</label>
+                                    <div class="form-check-group">
+                                        {% for choice in form.claim_status %}
+                                            <div class="form-check form-check-inline">
+                                                {{ choice.tag }}
+                                                <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% if form.claim_status.errors %}
+                                        <div class="invalid-feedback">{{ form.claim_status.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.ncb.id_for_label }}">NCB<span class="tooltip-icon" data-toggle="tooltip" title="No Claim Bonus percentage">ⓘ</span></label>
+                                    {{ form.ncb }}
+                                    {% if form.ncb.errors %}
+                                        <div class="invalid-feedback">{{ form.ncb.errors|join:" " }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.preferred_idv.id_for_label }}">Preferred IDV</label>
+                                {{ form.preferred_idv }}
+                                {% if form.preferred_idv.errors %}
+                                    <div class="invalid-feedback">{{ form.preferred_idv.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Add-ons & Docs -->
+                        <div class="col-md-4">
+                            <div class="section-title">3. Add-ons & Docs</div>
+                            <div class="form-group">
+                                <label for="{{ form.add_ons.id_for_label }}">Add-ons</label>
+                                {{ form.add_ons }}
+                                {% if form.add_ons.errors %}
+                                    <div class="invalid-feedback">{{ form.add_ons.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.preferred_insurer.id_for_label }}">Insurers</label>
+                                {{ form.preferred_insurer }}
+                                {% if form.preferred_insurer.errors %}
+                                    <div class="invalid-feedback">{{ form.preferred_insurer.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.additional_requirements.id_for_label }}">Requirements</label>
+                                {{ form.additional_requirements }}
+                                {% if form.additional_requirements.errors %}
+                                    <div class="invalid-feedback">{{ form.additional_requirements.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <!-- New Fields: Email ID and Phone Number -->
+                            <div class="form-group">
+                                <label for="{{ form.email_id.id_for_label }}">Email ID<span class="tooltip-icon" data-toggle="tooltip" title="Contact email for this request">ⓘ</span></label>
+                                {{ form.email_id }}
+                                {% if form.email_id.errors %}
+                                    <div class="invalid-feedback">{{ form.email_id.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.phone_number.id_for_label }}">Phone Number<span class="tooltip-icon" data-toggle="tooltip" title="Contact phone number (e.g., +911234567890)">ⓘ</span></label>
+                                {{ form.phone_number }}
+                                {% if form.phone_number.errors %}
+                                    <div class="invalid-feedback">{{ form.phone_number.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.document1.id_for_label }}">Doc 1</label>
+                                {{ form.document1 }}
+                                {% if form.document1.errors %}
+                                    <div class="invalid-feedback">{{ form.document1.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.document2.id_for_label }}">Doc 2</label>
+                                {{ form.document2 }}
+                                {% if form.document2.errors %}
+                                    <div class="invalid-feedback">{{ form.document2.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.document3.id_for_label }}">Doc 3</label>
+                                {{ form.document3 }}
+                                {% if form.document3.errors %}
+                                    <div class="invalid-feedback">{{ form.document3.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.document4.id_for_label }}">Doc 4</label>
+                                {{ form.document4 }}
+                                {% if form.document4.errors %}
+                                    <div class="invalid-feedback">{{ form.document4.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.document5.id_for_label }}">Doc 5</label>
+                                {{ form.document5 }}
+                                {% if form.document5.errors %}
+                                    <div class="invalid-feedback">{{ form.document5.errors|join:" " }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize Select2
+            $('#id_add_ons, #id_preferred_insurer').select2({ width: '100%', placeholder: 'Select options' });
+
+            // Tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Toggle fields based on business type
+            function toggleFields() {
+                const businessType = $('#id_business_type').val() || '';
+                const isNew = businessType === 'New Business';
+                const isBreakIn = businessType === 'Used';
+                const isExisting = !(isNew || isBreakIn);
+
+                $('#new-business-fields').toggleClass('hidden-field', !isNew);
+                $('#registration-details').toggleClass('hidden-field', isNew);
+                $('#existing-business-fields').toggleClass('hidden-field', !(isExisting && !isNew));
+
+                const saodOption = $("#id_coverage_type option[value='SAOD']");
+                saodOption.prop('disabled', isNew);
+                if (isNew && $('#id_coverage_type').val() === 'SAOD') {
+                    $('#id_coverage_type').val('');
+                }
+
+                if (isNew) {
+                    $('#id_registration_number, #id_ncb, #id_registration_date').val('');
+                    $('input[name="claim_status"]').prop('checked', false);
+                    expiryDatePicker.clear();
+                } else if (isBreakIn) {
+                    $('#id_new-business-fields, #id_existing-business-fields').addClass('hidden-field');
+                    $('#id_ncb').val('');
+                    $('input[name="claim_status"]').prop('checked', false);
+                    expiryDatePicker.clear();
+                } else {
+                    $('#id_new-business-fields').addClass('hidden-field');
+                    $('#id_rto_code').val('');
+                }
+
+                $('#id_registration_number').prop('required', !isNew && !isBreakIn);
+            }
+
+            // Initialize Flatpickr for previous_expiry_date
+            const today = new Date();
+            const expiryDatePicker = flatpickr('#id_previous_expiry_date', {
+                dateFormat: 'Y-m-d',
+                defaultDate: null,
+                minDate: '2000-01-01'
+            });
+
+            // Date Picker Validation for Rollover
+            function updateExpiryDate() {
+                const businessType = $('#id_business_type').val() || '';
+                if (businessType === 'Rollover') {
+                    expiryDatePicker.set({
+                        minDate: today,
+                        maxDate: null,
+                        defaultDate: today
+                    });
+                    expiryDatePicker.setDate(today);
+                } else {
+                    expiryDatePicker.set({
+                        minDate: '2000-01-01',
+                        maxDate: null,
+                        defaultDate: null
+                    });
+                    expiryDatePicker.clear();
+                }
+            }
+
+            // Initial Calls
+            toggleFields();
+            updateExpiryDate();
+
+            // Event Listener
+            $('#id_business_type').on('change', function() {
+                toggleFields();
+                updateExpiryDate();
+            });
+
+            // Registration Date Constraint
+            $('#id_registration_date').attr({
+                'min': '2000-01-01',
+                'max': today.toISOString().split('T')[0]
+            });
+
+            // Highlight fields with errors
+            {% for field in form %}
+                {% if field.errors %}
+                    $('#{{ field.id_for_label }}').addClass('is-invalid');
+                {% endif %}
+            {% endfor %}
+
+            // Submit button loading state
+            $('#quotation-form').on('submit', function() {
+                const $btn = $(this).find('.btn-primary');
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Submitting...');
+                setTimeout(() => $btn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Submit Request'), 2000);
+            });
+        });
+    </script>
+</body>
+</html>

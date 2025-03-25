@@ -1,0 +1,413 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .container-fluid {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.03);
+            padding: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        /* Heading Styles */
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        /* Filter Section Styles */
+        .filter-section form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-section label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 0;
+        }
+
+        .filter-section input, .filter-section select {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            transition: border-color 0.2s;
+            width: 120px;
+        }
+
+        .filter-section input:focus, .filter-section select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.75rem;
+        }
+
+        .table th, .table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.8rem;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Specific Column Widths */
+        .table th:nth-child(1), .table td:nth-child(1) { width: 10%; } /* Tracking ID */
+        .table th:nth-child(2), .table td:nth-child(2) { width: 10%; } /* Registration Number */
+        .table th:nth-child(3), .table td:nth-child(3) { width: 8%; }  /* Product Type */
+        .table th:nth-child(4), .table td:nth-child(4) { width: 8%; }  /* Business Type */
+        .table th:nth-child(5), .table td:nth-child(5) { width: 12%; } /* Email ID */
+        .table th:nth-child(6), .table td:nth-child(6) { width: 10%; } /* Phone Number */
+        .table th:nth-child(7), .table td:nth-child(7) { width: 8%; }  /* Expiry Date */
+        .table th:nth-child(8), .table td:nth-child(8) { width: 10%; } /* Payment Status */
+        .table th:nth-child(9), .table td:nth-child(9) { width: 8%; }  /* Coverage Type */
+        .table th:nth-child(10), .table td:nth-child(10) { width: 10%; } /* Created At */
+        .table th:nth-child(11), .table td:nth-child(11) { width: 12%; } /* Actions */
+
+        /* Clickable Tracking ID */
+        .tracking-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .tracking-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            color: #fff;
+            display: inline-block;
+        }
+
+        .status-open { background-color: #fd7e14; }
+        .status-assigned { background-color: #007bff; }
+        .status-resolved { background-color: #28a745; }
+        .status-incomplete { background-color: #dc3545; }
+        .status-accepted { background-color: #ffc107; }
+        .status-payment { background-color: #6f42c1; }
+        .status-changes-requested { background-color: #fd7e14; }
+        .status-inspection-requested { background-color: #20c997; }
+
+        /* Button Styles */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #fff;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9f2ff;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.7rem;
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination .current {
+            font-size: 0.875rem;
+            color: #343a40;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .filter-section form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .filter-section input, .filter-section select {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+            .table {
+                font-size: 0.65rem;
+            }
+            .table th, .table td {
+                padding: 6px 8px;
+            }
+            .status-badge {
+                font-size: 0.65rem;
+                padding: 2px 4px;
+            }
+            .btn-sm {
+                padding: 3px 6px;
+                font-size: 0.65rem;
+            }
+            .table th:nth-child(5), .table td:nth-child(5), /* Email ID */
+            .table th:nth-child(6), .table td:nth-child(6), /* Phone Number */
+            .table th:nth-child(9), .table td:nth-child(9) { /* Coverage Type */
+                display: none;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-buttons {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Agent Dashboard</h1>
+        <div class="header-buttons">
+            <a href="{% url 'raise_quotation_request' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Raise New Quotation Request
+            </a>
+            <a href="{% url 'custom_logout' %}" class="btn btn-secondary">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <h2>Filter Requests</h2>
+            <div class="filter-section">
+                <form method="get" id="filter-form">
+                    <label for="registration_number">Reg. No.:</label>
+                    <input type="text" name="registration_number" id="registration_number" placeholder="Reg. No." value="{{ registration_number_filter|default:'' }}">
+
+                    <label for="product_type">Vehicle:</label>
+                    <select name="product_type" id="product_type">
+                        <option value="">All</option>
+                        {% for value, label in product_type_choices %}
+                            <option value="{{ value }}" {% if product_type_filter == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="coverage_type">Policy:</label>
+                    <select name="coverage_type" id="coverage_type">
+                        <option value="">All</option>
+                        {% for value, label in coverage_type_choices %}
+                            <option value="{{ value }}" {% if coverage_type_filter == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="business_type">Business:</label>
+                    <select name="business_type" id="business_type">
+                        <option value="">All</option>
+                        {% for value, label in business_type_choices %}
+                            <option value="{{ value }}" {% if business_type_filter == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="status">Status:</label>
+                    <select name="status" id="status">
+                        <option value="">All</option>
+                        <option value="Open" {% if status_filter == "Open" %}selected{% endif %}>Open</option>
+                        <option value="Assigned" {% if status_filter == "Assigned" %}selected{% endif %}>Assigned</option>
+                        <option value="Resolved" {% if status_filter == "Resolved" %}selected{% endif %}>Resolved</option>
+                        <option value="Incomplete" {% if status_filter == "Incomplete" %}selected{% endif %}>Incomplete</option>
+                        <option value="Accepted" {% if status_filter == "Accepted" %}selected{% endif %}>Accepted</option>
+                        <option value="Payment" {% if status_filter == "Payment" %}selected{% endif %}>Payment</option>
+                        <option value="Changes Requested" {% if status_filter == "Changes Requested" %}selected{% endif %}>Changes Requested</option>
+                        <option value="Inspection Requested" {% if status_filter == "Inspection Requested" %}selected{% endif %}>Inspection Requested</option>
+                    </select>
+
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter"></i> Filter</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Your Quotation Requests</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tracking ID</th>
+                        <th>Registration Number</th>
+                        <th>Product Type</th>
+                        <th>Business Type</th>
+                        <th>Email ID</th>
+                        <th>Phone Number</th>
+                        <th>Expiry Date</th>
+                        <th>Payment Status</th>
+                        <th>Coverage Type</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in page_obj %}
+                        <tr>
+                            <td><a href="{% url 'view_request' request.id %}" class="tracking-link">{{ request.tracking_id }}</a></td>
+                            <td>{{ request.registration_number|default:'N/A' }}</td>
+                            <td>{{ request.product_type }}</td>
+                            <td>{{ request.business_type }}</td>
+                            <td>{{ request.email_id|default:'N/A' }}</td>
+                            <td>{{ request.phone_number|default:'N/A' }}</td>
+                            <td>{{ request.previous_expiry_date|date:"Y-m-d"|default:'N/A' }}</td>
+                            <td><span class="status-badge status-{{ request.status|lower|replace_underscore }}">{{ request.status }}</span></td>
+                            <td>{{ request.coverage_type|default:'N/A' }}</td>
+                            <td>{{ request.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                {% if request.status == 'Incomplete' %}
+                                    <a href="{% url 'edit_request' request.id %}" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i> Edit</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="11">No quotation requests found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if registration_number_filter %}®istration_number={{ registration_number_filter }}{% endif %}{% if product_type_filter %}&product_type={{ product_type_filter }}{% endif %}{% if coverage_type_filter %}&coverage_type={{ coverage_type_filter }}{% endif %}{% if business_type_filter %}&business_type={{ business_type_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-secondary btn-sm"><i class="fas fa-angle-double-left"></i> First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if registration_number_filter %}®istration_number={{ registration_number_filter }}{% endif %}{% if product_type_filter %}&product_type={{ product_type_filter }}{% endif %}{% if coverage_type_filter %}&coverage_type={{ coverage_type_filter }}{% endif %}{% if business_type_filter %}&business_type={{ business_type_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-secondary btn-sm"><i class="fas fa-angle-left"></i> Previous</a>
+                {% endif %}
+                <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if registration_number_filter %}®istration_number={{ registration_number_filter }}{% endif %}{% if product_type_filter %}&product_type={{ product_type_filter }}{% endif %}{% if coverage_type_filter %}&coverage_type={{ coverage_type_filter }}{% endif %}{% if business_type_filter %}&business_type={{ business_type_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-secondary btn-sm">Next <i class="fas fa-angle-right"></i></a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if registration_number_filter %}®istration_number={{ registration_number_filter }}{% endif %}{% if product_type_filter %}&product_type={{ product_type_filter }}{% endif %}{% if coverage_type_filter %}&coverage_type={{ coverage_type_filter }}{% endif %}{% if business_type_filter %}&business_type={{ business_type_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-secondary btn-sm">Last <i class="fas fa-angle-double-right"></i></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

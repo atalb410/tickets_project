@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Welcome to Helpdesk</h1>
+    <div class="row justify-content-center">
+        <!-- Admin Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-shield-lock fs-1 text-primary mb-3"></i>
+                    <h3 class="card-title">Admin</h3>
+                    <p class="card-text">Access the admin dashboard to manage users, requests, and system settings.</p>
+                    <a href="{% url 'admin_login' %}" class="btn btn-primary">Login as Admin</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Engineer Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-tools fs-1 text-success mb-3"></i>
+                    <h3 class="card-title">Engineer</h3>
+                    <p class="card-text">Handle technical requests, provide quotes, and resolve customer issues.</p>
+                    <a href="{% url 'engineer_login' %}" class="btn btn-success">Login as Engineer</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Agent Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-person fs-1 text-info mb-3"></i>
+                    <h3 class="card-title">Agent</h3>
+                    <p class="card-text">Submit quotation requests and track their progress.</p>
+                    <a href="{% url 'agent_login' %}" class="btn btn-info text-white">Login as Agent</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

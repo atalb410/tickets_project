@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Request: {{ quotation_request.tracking_id }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0;
+        }
+
+        .container-fluid {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .row {
+            margin: 0 -15px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .col-md-5, .col-md-7 {
+            padding: 15px;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.03);
+            padding: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        /* Heading Styles */
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        /* Table Styles */
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .details-table th, .details-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .details-table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .details-table tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #fff;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9f2ff;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-group select, .form-group textarea {
+            font-size: 0.875rem;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            width: 100%;
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .form-group select:focus, .form-group textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .col-md-5, .col-md-7 {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Assign Request: {{ quotation_request.tracking_id }}</h1>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Column: Request Details -->
+            <div class="col-md-5">
+                <div class="card">
+                    <h2>Request Details</h2>
+                    <table class="details-table">
+                        <tr><th>Tracking ID</th><td>{{ quotation_request.tracking_id }}</td></tr>
+                        <tr><th>Registration Number</th><td>{{ quotation_request.registration_number|default:"Not provided" }}</td></tr>
+                        <tr><th>Business Type</th><td>{{ quotation_request.business_type|default:"Not provided" }}</td></tr>
+                        <tr><th>Status</th><td>{{ quotation_request.status|default:"Not provided" }}</td></tr>
+                        <tr><th>Product Type</th><td>{{ quotation_request.product_type|default:"Not provided" }}</td></tr>
+                        <tr><th>Coverage Type</th><td>{{ quotation_request.coverage_type|default:"Not provided" }}</td></tr>
+                        <tr><th>Make/Model/Variant</th><td>{{ quotation_request.make_model_variant|default:"Not provided" }}</td></tr>
+                        <tr><th>Registration Date</th><td>{{ quotation_request.registration_date|date:"Y-m-d"|default:"Not provided" }}</td></tr>
+                        <tr><th>RTO Code</th><td>{{ quotation_request.rto_code|default:"Not provided" }}</td></tr>
+                        <tr><th>NCB</th><td>{{ quotation_request.ncb|default:"Not provided" }}</td></tr>
+                        <tr><th>Claim Status</th><td>{{ quotation_request.claim_status|default:"Not provided" }}</td></tr>
+                        <tr><th>Previous Expiry Date</th><td>{{ quotation_request.previous_expiry_date|date:"Y-m-d"|default:"Not provided" }}</td></tr>
+                        <tr><th>Preferred IDV</th><td>{{ quotation_request.preferred_idv|default:"Not provided" }}</td></tr>
+                        <tr><th>Add-ons</th><td>{% for add_on in quotation_request.add_ons.all %}{{ add_on.name }}{% if not forloop.last %}, {% endif %}{% empty %}None{% endfor %}</td></tr>
+                        <tr><th>Preferred Insurers</th><td>{% for insurer in quotation_request.preferred_insurer.all %}{{ insurer.name }}{% if not forloop.last %}, {% endif %}{% empty %}None{% endfor %}</td></tr>
+                        <tr><th>Additional Requirements</th><td>{{ quotation_request.additional_requirements|default:"None" }}</td></tr>
+                        <tr><th>Documents</th><td>
+                            <ul style="padding-left: 15px; margin: 0;">
+                                <li>Doc 1: {% if quotation_request.document1 %}<a href="{{ quotation_request.document1.url }}">Download</a>{% else %}Not uploaded{% endif %}</li>
+                                <li>Doc 2: {% if quotation_request.document2 %}<a href="{{ quotation_request.document2.url }}">Download</a>{% else %}Not uploaded{% endif %}</li>
+                                <li>Doc 3: {% if quotation_request.document3 %}<a href="{{ quotation_request.document3.url }}">Download</a>{% else %}Not uploaded{% endif %}</li>
+                            </ul>
+                        </td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Column: Assign and Mark Incomplete Forms -->
+            <div class="col-md-7">
+                <div class="card">
+                    <h2>Assign to Engineer</h2>
+                    <form method="post" action="{% url 'assign_request' quotation_request.id %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="engineer">Select Engineer:</label>
+                            <select name="engineer" id="engineer" required>
+                                <option value="">-- Select an Engineer --</option>
+                                {% for engineer in engineers %}
+                                    <option value="{{ engineer.id }}">{{ engineer.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Assign</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>Mark as Incomplete</h2>
+                    <form method="post" action="{% url 'mark_incomplete' quotation_request.id %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="comment">Comment (Optional):</label>
+                            <textarea name="comment" id="comment" rows="2" placeholder="Add a comment for incomplete docs"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-secondary"><i class="fas fa-exclamation-triangle"></i> Mark Incomplete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

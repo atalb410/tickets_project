@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .container-fluid {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.03);
+            padding: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        /* Heading Styles */
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        /* Form Styles */
+        .filter-section form {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-section label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 0;
+        }
+
+        .filter-section input, .filter-section select {
+            font-size: 0.875rem;
+            padding: 8px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            transition: border-color 0.2s;
+        }
+
+        .filter-section input:focus, .filter-section select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #fff;
+            display: inline-block;
+        }
+
+        .status-open { background-color: #fd7e14; }
+        .status-assigned { background-color: #007bff; }
+        .status-resolved { background-color: #28a745; }
+        .status-incomplete { background-color: #dc3545; }
+        .status-payment { background-color: #007bff; }
+        .status-changes-requested { background-color: #ffc107; color: #000; }
+        .status-inspection-requested { background-color: #17a2b8; }
+
+        /* Button Styles */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #fff;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9f2ff;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination .current {
+            font-size: 0.875rem;
+            color: #343a40;
+            font-weight: 500;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #343a40;
+        }
+
+        .modal-body p {
+            font-size: 0.875rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-body h6 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body h6 .toggle-icon {
+            font-size: 0.9rem;
+            color: #6c757d;
+            transition: transform 0.3s;
+        }
+
+        .modal-body h6 .toggle-icon.active {
+            transform: rotate(180deg);
+        }
+
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .activity-table th, .activity-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .activity-table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .collapsible {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            max-height: 0;
+        }
+
+        .collapsible.show {
+            display: block;
+            max-height: 300px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .filter-section form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .filter-section input, .filter-section select {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .table th, .table td {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+            .modal-dialog {
+                margin: 10px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-buttons {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Admin Dashboard</h1>
+        <div class="header-buttons">
+            <a href="{% url 'custom_logout' %}" class="btn btn-secondary">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <h2>Filter Requests</h2>
+            <div class="filter-section">
+                <form method="get" id="filter-form">
+                    <label for="search">Search:</label>
+                    <input type="text" name="q" id="search" placeholder="Tracking ID or Reg. Number" value="{{ search_query }}">
+                    <label for="status">Status:</label>
+                    <select name="status" id="status">
+                        <option value="">All</option>
+                        <option value="Open" {% if status_filter == "Open" %}selected{% endif %}>Open</option>
+                        <option value="Assigned" {% if status_filter == "Assigned" %}selected{% endif %}>Assigned</option>
+                        <option value="Resolved" {% if status_filter == "Resolved" %}selected{% endif %}>Resolved</option>
+                        <option value="Incomplete" {% if status_filter == "Incomplete" %}selected{% endif %}>Incomplete</option>
+                        <option value="Inspection Requested" {% if status_filter == "Inspection Requested" %}selected{% endif %}>Inspection Requested</option>
+                        <option value="Payment" {% if status_filter == "Payment" %}selected{% endif %}>Payment</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter"></i> Apply Filter</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>All Quotation Requests</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tracking ID</th>
+                        <th>Registration Number</th>
+                        <th>Product Type</th>
+                        <th>Business Type</th>
+                        <th>Status</th>
+                        <th>Created By</th>
+                        <th>Assigned To</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in page_obj %}
+                        <tr>
+                            <td>{{ request.tracking_id }}</td>
+                            <td>{{ request.registration_number }}</td>
+                            <td>{{ request.product_type }}</td>
+                            <td>{{ request.business_type }}</td>
+                            <td><span class="status-badge status-{{ request.status|lower }}">{{ request.status }}</span></td>
+                            <td>{{ request.created_by.username }}</td>
+                            <td>{{ request.assigned_to.username|default:"Not assigned" }}</td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewModal{{ request.id }}"><i class="fas fa-eye"></i> View</button>
+                                <a href="{% url 'assign_request' request.id %}" class="btn btn-secondary btn-sm"><i class="fas fa-user-plus"></i> Assign</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8">No quotation requests found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1&q={{ search_query }}&status={{ status_filter }}" class="btn btn-secondary btn-sm"><i class="fas fa-angle-double-left"></i> First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}&q={{ search_query }}&status={{ status_filter }}" class="btn btn-secondary btn-sm"><i class="fas fa-angle-left"></i> Previous</a>
+                {% endif %}
+                <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}&q={{ search_query }}&status={{ status_filter }}" class="btn btn-secondary btn-sm">Next <i class="fas fa-angle-right"></i></a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}&q={{ search_query }}&status={{ status_filter }}" class="btn btn-secondary btn-sm">Last <i class="fas fa-angle-double-right"></i></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- View Modals with Activity Tracker and Inspection/KYC Details -->
+    {% for request in page_obj %}
+        <div class="modal fade" id="viewModal{{ request.id }}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel{{ request.id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewModalLabel{{ request.id }}">Request Details: {{ request.tracking_id }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Registration Number:</strong> {{ request.registration_number }}</p>
+                        <p><strong>Product Type:</strong> {{ request.product_type }}</p>
+                        <p><strong>Business Type:</strong> {{ request.business_type }}</p>
+                        <p><strong>Status:</strong> <span class="status-badge status-{{ request.status|lower }}">{{ request.status }}</span></p>
+                        <p><strong>Created By:</strong> {{ request.created_by.username }}</p>
+                        <p><strong>Assigned To:</strong> {{ request.assigned_to.username|default:"Not assigned" }}</p>
+                        <p><strong>Comments:</strong> {{ request.comments|default:"No comments" }}</p>
+
+                        <!-- Inspection Details Display -->
+                        {% if request.inspection_requests.first %}
+                            <h6>Inspection Details:</h6>
+                            <p><strong>Contact Number:</strong> {{ request.inspection_requests.first.contact_number }}</p>
+                            <p><strong>Address:</strong> {{ request.inspection_requests.first.address }}</p>
+                            <p><strong>RC Upload:</strong>
+                                {% if request.inspection_requests.first.rc_upload %}
+                                    <a href="{{ request.inspection_requests.first.rc_upload.url }}" target="_blank">View RC</a>
+                                {% else %}
+                                    No RC Uploaded
+                                {% endif %}
+                            </p>
+                        {% endif %}
+
+                        <!-- KYC Details Display (Conditional) -->
+                        {% if request.kyc_document1 or request.kyc_document2 %}
+                            <h6>KYC Details:</h6>
+                            {% if request.kyc_document1 %}
+                                <p><strong>KYC Document 1:</strong> <a href="{{ request.kyc_document1.url }}" target="_blank">View Document 1</a></p>
+                            {% endif %}
+                            {% if request.kyc_document2 %}
+                                <p><strong>KYC Document 2:</strong> <a href="{{ request.kyc_document2.url }}" target="_blank">View Document 2</a></p>
+                            {% endif %}
+                        {% endif %}
+
+                        <h6 id="toggle-activity-{{ request.id }}" onclick="toggleActivity('{{ request.id }}')">Activity Tracker <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span></h6>
+                        <div id="activity-content-{{ request.id }}" class="collapsible">
+                            <table class="activity-table">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Description</th>
+                                        <th>Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for log in request.activity_logs.all %}
+                                        <tr>
+                                            <td>{{ log.status }}</td>
+                                            <td>{{ log.description }}</td>
+                                            <td>{{ log.timestamp|date:"Y-m-d H:i" }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="3">No activity recorded.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Debounce function for live filter updates
+            function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+
+            // Live filter update
+            const updateFilters = debounce(function() {
+                $('#filter-form').submit();
+            }, 500);
+
+            $('#search').on('input', updateFilters);
+            $('#status').on('change', updateFilters);
+
+            // Toggle activity tracker in modals
+            window.toggleActivity = function(requestId) {
+                const content = document.getElementById(`activity-content-${requestId}`);
+                const icon = document.querySelector(`#toggle-activity-${requestId} .toggle-icon i`);
+                content.classList.toggle('show');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+
+                if (content.classList.contains('show')) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                } else {
+                    content.style.maxHeight = 0;
+                }
+            };
+        });
+    </script>
+</body>
+</html>
