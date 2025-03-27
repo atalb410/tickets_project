@@ -154,6 +154,7 @@
         /* Form Styles */
         .form-group {
             margin-bottom: 20px;
+            width: 100%; /* Ensure form-group doesn't overflow */
         }
 
         .form-group label {
@@ -170,8 +171,10 @@
             border: 1px solid #e9ecef;
             border-radius: 6px;
             width: 100%;
+            max-width: 100%; /* Prevent overflow */
             background-color: #fff;
             transition: border-color 0.2s;
+            box-sizing: border-box; /* Include padding in width */
         }
 
         .form-group textarea {
@@ -183,6 +186,26 @@
             border-color: #007bff;
             box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
             outline: none;
+        }
+
+        /* Alert Styles for Messages */
+        .alert {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .alert-info {
+            background-color: #e7f3ff;
+            border: 1px solid #b8daff;
+            color: #004085;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
         }
 
         /* Responsive Design */
@@ -235,30 +258,36 @@
 
             <!-- Right Column: Assign and Mark Incomplete Forms -->
             <div class="col-md-7">
+                <!-- Display Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Assign to Engineer Form -->
                 <div class="card">
                     <h2>Assign to Engineer</h2>
                     <form method="post" action="{% url 'assign_request' quotation_request.id %}">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label for="engineer">Select Engineer:</label>
-                            <select name="engineer" id="engineer" required>
-                                <option value="">-- Select an Engineer --</option>
-                                {% for engineer in engineers %}
-                                    <option value="{{ engineer.id }}">{{ engineer.username }}</option>
-                                {% endfor %}
-                            </select>
+                            <label for="id_assigned_to">Select Engineer:</label>
+                            {{ form.assigned_to }}
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Assign</button>
                     </form>
                 </div>
 
+                <!-- Mark as Incomplete Form -->
                 <div class="card">
                     <h2>Mark as Incomplete</h2>
                     <form method="post" action="{% url 'mark_incomplete' quotation_request.id %}">
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="comment">Comment (Optional):</label>
-                            <textarea name="comment" id="comment" rows="2" placeholder="Add a comment for incomplete docs"></textarea>
+                            <textarea name="comment" id="comment" class="form-control" rows="2" placeholder="Add a comment for incomplete docs"></textarea>
                         </div>
                         <button type="submit" class="btn btn-secondary"><i class="fas fa-exclamation-triangle"></i> Mark Incomplete</button>
                     </form>
@@ -266,5 +295,8 @@
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

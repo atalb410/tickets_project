@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from .models import QuotationRequest, AddOn, Insurer, InspectionRequest
 from django.core.files.uploadedfile import UploadedFile
+from django.contrib.auth.models import User, Group
 import re
 from datetime import datetime, date
 
@@ -86,6 +87,11 @@ class QuotationRequestForm(forms.ModelForm):
         today = date.today().isoformat()
         self.fields['previous_expiry_date'].widget.attrs.update({
             'min': '2000-01-01',
+            'max': today
+        })
+        self.fields['registration_date'].widget.attrs.update({
+            'min': '1900-01-01',
+            'max': today
         })
 
     def set_conditional_fields(self):
@@ -139,6 +145,8 @@ class QuotationRequestForm(forms.ModelForm):
             'document5',
             'email_id',
             'phone_number',
+            'kyc_document1',
+            'kyc_document2',
         ]
 
         widgets = {
@@ -175,19 +183,25 @@ class QuotationRequestForm(forms.ModelForm):
             'document2': forms.FileInput(attrs={'class': 'form-control-file'}),
             'document3': forms.FileInput(attrs={'class': 'form-control-file'}),
             'document4': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'document5': forms.FileInput(attrs={'class': 'form-control-file'})
+            'document5': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'kyc_document1': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'kyc_document2': forms.FileInput(attrs={'class': 'form-control-file'}),
         }
 
         labels = {
             'ncb': "No Claim Bonus (NCB)",
             'previous_expiry_date': "Previous Policy Expiry Date",
-            'preferred_idv': "Preferred Insured Declared Value (IDV)"
+            'preferred_idv': "Preferred Insured Declared Value (IDV)",
+            'kyc_document1': "KYC Document 1",
+            'kyc_document2': "KYC Document 2",
         }
 
         help_texts = {
             'ncb': "Select applicable No Claim Bonus percentage",
             'previous_expiry_date': "Last policy expiry date if renewal",
-            'preferred_idv': "Leave blank for insurer calculation"
+            'preferred_idv': "Leave blank for insurer calculation",
+            'kyc_document1': "Upload first KYC document (e.g., Aadhaar, PAN)",
+            'kyc_document2': "Upload second KYC document (e.g., Voter ID, Passport)",
         }
 
     def clean(self):
@@ -234,7 +248,7 @@ class QuotationRequestForm(forms.ModelForm):
 
         # File Upload Validation
         allowed_types = ["application/pdf", "image/jpeg", "image/jpg", "image/png"]
-        for field_name in ["document1", "document2", "document3", "document4", "document5"]:
+        for field_name in ["document1", "document2", "document3", "document4", "document5", "kyc_document1", "kyc_document2"]:
             file = cleaned_data.get(field_name)
             if file and isinstance(file, UploadedFile):
                 if file.content_type not in allowed_types:
@@ -251,3 +265,34 @@ class InspectionRequestForm(forms.ModelForm):
             'contact_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter contact number'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter full address'})
         }
+
+    def clean_contact_number(self):
+        contact_number = self.cleaned_data.get('contact_number')
+        if not re.match(r'^\+?\d{10,15}$', contact_number):
+            raise ValidationError("Enter a valid contact number (10-15 digits, optional country code, e.g., +911234567890 or 1234567890)")
+        return contact_number
+
+    def clean_rc_upload(self):
+        rc_upload = self.cleaned_data.get('rc_upload')
+        if rc_upload:
+            allowed_types = ["application/pdf", "image/jpeg", "image/jpg", "image/png"]
+            if rc_upload.content_type not in allowed_types:
+                raise ValidationError("Only PDF, JPEG, JPG, and PNG files are allowed for RC upload.")
+        return rc_upload
+
+class AssignRequestForm(forms.ModelForm):
+    assigned_to = forms.ModelChoiceField(
+        queryset=User.objects.filter(groups__name='Engineers', is_active=True),
+        label="Assign to Engineer",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = QuotationRequest
+        fields = ['assigned_to']
+
+    def clean_assigned_to(self):
+        assigned_to = self.cleaned_data.get('assigned_to')
+        if not assigned_to:
+            raise ValidationError("Please select an engineer to assign the request to.")
+        return assigned_to

@@ -57,8 +57,7 @@ class QuotationRequest(models.Model):
         ('35%', '35%'),
         ('45%', '45%'),
         ('50%', '50%'),
-        ('55%', '55%'),
-        ('60%', '60%'),
+        ('65%', '65%'),
     ]
 
     CLAIM_STATUS_CHOICES = [

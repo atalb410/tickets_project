@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import QuotationRequest, Insurer, ActivityLog, QuoteAttachment, QuoteChangeRequest, InspectionRequest, Comment
-from .forms import QuotationRequestForm, InspectionRequestForm
+from .forms import QuotationRequestForm, InspectionRequestForm, AssignRequestForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 import logging
@@ -156,18 +156,22 @@ def admin_dashboard(request):
 def assign_request(request, request_id):
     quotation_request = get_object_or_404(QuotationRequest, id=request_id)
     if request.method == 'POST':
-        engineer_id = request.POST.get('engineer')
-        if engineer_id:
-            engineer = User.objects.get(id=engineer_id)
-            quotation_request.assigned_to = engineer
+        form = AssignRequestForm(request.POST, instance=quotation_request)
+        if form.is_valid():
+            form.save()
             quotation_request.status = 'Assigned'
             quotation_request.save()
+            engineer = quotation_request.assigned_to
             log_activity(request, quotation_request, 'Assigned', f'Assigned to {engineer.username}')
+            messages.success(request, f"Request successfully assigned to {engineer.username}.")
             return redirect('admin_dashboard')
-    engineers = User.objects.filter(is_staff=True)
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = AssignRequestForm(instance=quotation_request)
     return render(request, 'tickets/assign_request.html', {
         'quotation_request': quotation_request,
-        'engineers': engineers,
+        'form': form,
     })
 
 @login_required

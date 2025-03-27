@@ -1,6 +1,18 @@
+# File types
 *.zip
 *.exe
+*.log
+
+# Python/Django
 venv/
 __pycache__/
 *.pyc
 db.sqlite3
+.env
+
+# Media files
+media/
+
+# Editor files
+.vscode/
+*.swp
